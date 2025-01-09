@@ -8,18 +8,39 @@ let isUpgradeClicked = false;
 let isAutoClicked = false;
 
 let passif = 0;
+let leaf = 0;
+let sprout = 0;
+let bush = 0;
+let tree = 0;
+let forest = 0;
 
 let upgradeCost = 5;
 let autoClickerCost = 10;
 
 let bgImage;
 let svgMail;
+let svgLeaf;
+let svgSprout;
+let svgBush;
+let svgTree;
+let svgForest;
+let svgImages;
 
 function preload() {
   bgImage = loadImage("/assets/motif-fond.png");
   svgMail = loadImage("/assets/mail.svg");
   svgMailsimple = loadImage("/assets/mailsimple.svg");
+
+  svgLeaf = loadImage("/assets/leaf.svg");
+  svgSprout = loadImage("/assets/sprout.svg");
+  svgBush = loadImage("/assets/bush.svg");
+  svgTree = loadImage("/assets/tree.svg");
+  svgForest = loadImage("/assets/forest.svg");
+
+  svgImages = [svgLeaf, svgSprout, svgBush, svgTree, svgForest];
 }
+
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -27,6 +48,16 @@ function setup() {
 
 function draw() {
   background(bgImage);
+
+
+  
+  let textsSvg = [
+    "x"+leaf,
+    "x"+sprout,
+    "x"+bush,
+    "x"+tree,
+    "x"+forest,
+  ];
 
   // Ajouter les mails des clics automatiques chaque seconde
   if (frameCount % 60 == 0) {
@@ -64,7 +95,17 @@ function draw() {
     fill(255);
   }
   // rect(width / 2 - 250, height / 2 - 153, 500, 306)
-  image(svgMail, width / 2 - 250, height / 2 - 153, 500, 306);
+  // Transition effect parametersdth / 2 - 250, height / 2 - 153, 500, 306);
+
+  if (isCookieClicked) {
+    push();
+    translate(width / 2 - 250, height / 2 - 153 + 10);
+    scale(0.95);
+    image(svgMail, 0, 0, 500, 306);
+    pop();
+  } else {
+    image(svgMail, width / 2 - 250, height / 2 - 153, 500, 306);
+  }
 
   stroke(1);
 
@@ -99,15 +140,6 @@ function draw() {
       if (j === 0) {
         // Premier texte (avec image)
         yOffset = -60;
-
-        // Afficher l'image à côté du premier texte
-        image(
-          svgMailsimple,
-          i * rectWidth + rectWidth / 2 + 50, // Décalage horizontal à droite du texte
-          height - rectHeight / 2 + yOffset - 10, // Appliquer le même yOffset que le texte
-          25, // Largeur de l'image
-          15 // Hauteur de l'image
-        );
       } else if (j === 1) {
         // Texte central
         yOffset = 0;
@@ -132,11 +164,29 @@ function draw() {
           i * rectWidth + rectWidth / 2,
           height - rectHeight / 2 + yOffset
         );
+        if (j === 0) {
+          image(svgMailsimple, i * rectWidth + rectWidth / 2 + 50, height - rectHeight / 2 + yOffset - 12, 30, 20);
+        }
       }
     }
 
     // Exemple d'utilisation de rectId
     // console.log(`Rectangle ID: ${rectId}`);
+  }
+
+  for (let i = 0; i < textsSvg.length; i++) {
+    let xOffset = 50; // Décalage horizontal entre les textes
+    let yOffset = 10 + i * 70; // Décalage vertical constant
+
+    // Dessiner les SVG
+    image(svgImages[i], xOffset, yOffset, 50, 50);
+
+    // Dessiner les textes associés
+    fill("#fff"); // Couleur du texte
+    textSize(39); // Taille du texte
+    textAlign(LEFT, CENTER);
+  
+    text(textsSvg[i], xOffset + 70, yOffset + 25); // Décalage pour aligner à droite des images
   }
 }
 
@@ -158,6 +208,7 @@ function mousePressed() {
     if (mails >= 10) {
       mails -= 10;
       passif++;
+      leaf++;
     }
   }
 
@@ -171,6 +222,7 @@ function mousePressed() {
     if (mails >= 100) {
       mails -= 100;
       passif += 5;
+      sprout++;
     }
   }
 
@@ -184,6 +236,7 @@ function mousePressed() {
     if (mails >= 500) {
       mails -= 500;
       passif += 25;
+      bush++;
     }
   }
 
@@ -197,6 +250,7 @@ function mousePressed() {
     if (mails >= 1000) {
       mails -= 1000;
       passif += 50;
+      tree++;
     }
   }
 
@@ -210,6 +264,7 @@ function mousePressed() {
     if (mails >= 1500) {
       mails -= 1500;
       passif += 100;
+      forest++;
     }
   }
 
