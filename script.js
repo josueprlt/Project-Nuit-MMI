@@ -41,7 +41,7 @@ function createCard(message) {
   // Set timeout to remove card after 15 seconds
   setTimeout(() => {
     card.remove();
-  }, 1000000);
+  }, 10000);
   }
   
   // Example usage
