@@ -60,31 +60,43 @@ function draw() {
 	stroke(1)
 
 	fill(0)
-	text(upgradeCost + ' pour augmenter les clics', 0.25 * width, 0.875 * height)
-	text(autoClickerCost + ' pour un clic automatique', 0.75 * width, 0.875 * height)
+	// text(upgradeCost + ' pour augmenter les clics', 0.25 * width, 0.875 * height)
+	// text(autoClickerCost + ' pour un clic automatique', 0.75 * width, 0.875 * height)
+
+	let colors = ['#D2533E', '#ECECEC', '#D2533E', '#ECECEC', '#D2533E'];
+	let rectWidth = width / 5;
+	let rectHeight = 200;
+	for (let i = 0; i < 5; i++) {
+		fill(colors[i]);
+		noStroke();
+		rect(
+			i * rectWidth, height - rectHeight, // coin supérieur gauche du rectangle
+			rectWidth, rectHeight // largeur et hauteur du rectangle
+		);
+	}
 }
 
 function mousePressed() {
 	if (dist(mouseX, mouseY, width / 2, height / 2) <= 275) {
-		console.log('click');
-
 		isCookieClicked = true
 		mails += cookiesPerClick
 		totalMails += cookiesPerClick
 		mailFromCO2(cookiesPerClick)
 	}
-	else if (mouseY > height * 0.75 && mouseX < width / 2 && mails >= upgradeCost) {
-		isUpgradeClicked = true
-		cookiesPerClick++
-		mails -= upgradeCost
-		upgradeCost = parseInt(upgradeCost * 1.3)
-	}
-	else if (mouseY > height * 0.75 && mouseX >= width / 2 && mails >= autoClickerCost) {
-		isAutoClicked = true
-		clicksPerSecond++
-		mails -= autoClickerCost
-		autoClickerCost = parseInt(autoClickerCost * 1.2)
-	}
+	// else if (mouseY > height * 0.75 && mouseX < width / 2 && mails >= upgradeCost) {
+	// 	console.log('Level1');
+	// 	isUpgradeClicked = true
+	// 	cookiesPerClick++
+	// 	mails -= upgradeCost
+	// 	upgradeCost = parseInt(upgradeCost * 1.3)
+	// }
+	// else if (mouseY > height * 0.75 && mouseX >= width / 2 && mails >= autoClickerCost) {
+	// 	console.log('Level2');
+	// 	isAutoClicked = true
+	// 	clicksPerSecond++
+	// 	mails -= autoClickerCost
+	// 	autoClickerCost = parseInt(autoClickerCost * 1.2)
+	// }
 }
 
 function mouseReleased() {
