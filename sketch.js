@@ -63,16 +63,35 @@ function draw() {
 	// text(upgradeCost + ' pour augmenter les clics', 0.25 * width, 0.875 * height)
 	// text(autoClickerCost + ' pour un clic automatique', 0.75 * width, 0.875 * height)
 
-	let colors = ['#D2533E', '#ECECEC', '#D2533E', '#ECECEC', '#D2533E'];
+	let colors = ['#D2533E', '#CFD23E', '#D2533E', '#CFD23E', '#D2533E'];
 	let rectWidth = width / 5;
 	let rectHeight = 200;
+	let texts = [
+		['Price : 10', 'Leaf', '1mail/sec'],
+		['Price : 100', 'Sprout', '5mail/sec'],
+		['Price : 500', 'Bush', '25mail/sec'],
+		['Price : 1000', 'Tree', '50mail/sec'],
+		['Price : 1500', 'Forest', '100mail/sec']
+	];
+
 	for (let i = 0; i < 5; i++) {
 		fill(colors[i]);
 		noStroke();
 		rect(
-			i * rectWidth, height - rectHeight, // coin supérieur gauche du rectangle
-			rectWidth, rectHeight // largeur et hauteur du rectangle
+			i * rectWidth, height - rectHeight,
+			rectWidth, rectHeight
 		);
+
+		fill(0);
+		textAlign(CENTER, CENTER);
+		textSize(16);
+		for (let j = 0; j < texts[i].length; j++) {
+			text(
+				texts[i][j],
+				i * rectWidth + rectWidth / 2,
+				height - rectHeight / 2 + (j - 1) * 20
+			);
+		}
 	}
 }
 
