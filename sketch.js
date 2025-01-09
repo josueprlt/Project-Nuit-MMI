@@ -28,7 +28,7 @@ function draw() {
 	} else {
 		fill(255)
 	}
-	ellipse(width/2, height/2, 100)
+	ellipse(width/2, height/2, 300)
 	if(isUpgradeClicked) {
 		fill(255, 0, 0)
 	} else {
@@ -40,7 +40,7 @@ function draw() {
 		fill(255)
 	}
 	fill(0)
-	text('cookie', width/2, height/2)
+	text('Email', width/2, height/2)
 	text(upgradeCost + ' upgrade', 0.25*width, 0.875*height)
 	text(autoClickerCost + ' autoclicker', 0.75*width, 0.875*height)
 }
