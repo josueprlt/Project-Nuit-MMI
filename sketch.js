@@ -8,7 +8,7 @@ let isAutoClicked = false
 let upgradeCost = 5
 let autoClickerCost = 10
 function setup() {
-  createCanvas(400, 400)
+createCanvas(windowWidth, windowHeight)
 }
 
 function draw() {
@@ -34,13 +34,11 @@ function draw() {
 	} else {
 		fill(255)
 	}
-	rect(0, 300, 200, 100)
 	if(isAutoClicked) {
 		fill(255, 0, 0)
 	} else {
 		fill(255)
 	}
-	rect(200, 300, 200, 100)
 	fill(0)
 	text('cookie', width/2, height/2)
 	text(upgradeCost + ' upgrade', 0.25*width, 0.875*height)
