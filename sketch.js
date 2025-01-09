@@ -10,11 +10,21 @@ let isAutoClicked = false
 let upgradeCost = 5
 let autoClickerCost = 10
 
+
+let bgImage;
+
+function preload() {
+    bgImage = loadImage('/assets/motif-fond.png');
+}
+
+
 function setup() {
 	createCanvas(windowWidth, windowHeight)
 }
 
 function draw() {
+	background(bgImage)
+	
 	// Ajouter les mails des clics automatiques chaque seconde
 	if (frameCount % 60 == 0) {
 		mails += clicksPerSecond
@@ -22,19 +32,18 @@ function draw() {
 		mailFromCO2(clicksPerSecond)
 	}
 
-	background(220)
 	fill(0)
 	textSize(20)
 	textAlign(CENTER, CENTER)
 	text('Nombre de mails actuels : ' + mails, width / 2, 50)
 	if (totalCO2 > 1000) {
-		text('Total CO2 évité : ' + totalCO2 + ' kg', width / 2, 110)
+		text('CO2 Production Avoided: ' + totalCO2 + ' kg', width / 2, 110)
 	}
 	else if (totalCO2 > 10000) {
-		text('Total CO2 évité : ' + totalCO2 + ' t', width / 2, 110)
+		text('CO2 Production Avoided: ' + totalCO2 + ' tonnes', width / 2, 110)
 	}
 	else {
-		text('Total CO2 évité : ' + totalCO2 + ' g', width / 2, 110)
+		text('CO2 Production Avoided: ' + totalCO2 + ' g', width / 2, 110)
 	}
 	text(cookiesPerClick + ' mails par clic', width / 2, 140)
 	text(clicksPerSecond + ' mails par seconde', width / 2, 170)
@@ -84,4 +93,5 @@ function mailFromCO2(newMails) {
 }
 
 function grammesToKg(grammes) {
+	
 }
