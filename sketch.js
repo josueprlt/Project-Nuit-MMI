@@ -53,6 +53,16 @@ let stopNotifRadio = false;
 let stopNotifCloud = false;
 let stopNotifPlane = false;
 
+let leafOrNot = false;
+let sproutOrNot = false;
+let bushOrNot = false;
+let treeOrNot = false;
+let forestOrNot = false;
+
+let click = 0;
+let cps = 0;
+let lastSecond = 0;
+
 function preload() {
   bgImage = loadImage("/assets/motif-fond.png");
   svgMail = loadImage("/assets/mail.svg");
@@ -91,12 +101,49 @@ init();
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  frameRate(60);
+  x = width / 2;
+  y = height / 2;
   setNewTarget();
   clear();
 }
 
+let cpt = 0;
 function draw() {
   background(bgImage);
+
+  let currentSecond = floor(millis() / 1000);
+  if (currentSecond !== lastSecond) {
+    cps = click;
+    click = 0;
+    lastSecond = currentSecond;
+  }
+
+  fill(255);
+  textAlign(RIGHT, TOP);
+  textSize(16);
+  text(cps + " CPS", width - 20, 20);
+
+  updatePosition();
+  drawSVG(x, y, angle);
+  if (cpt == 0) {
+    setTimeout(() => {
+      boolboost1 = true;
+    }, 2000);
+
+    setTimeout(() => {
+      boolboost2 = true;
+    }, 120000);
+
+    setTimeout(() => {
+      boolboost3 = true;
+    }, 180000);
+
+    setTimeout(() => {
+      boolboost4 = true;
+    }, 240000);
+  }
+  cpt = 1;
 
   let textsSvg = [
     "x" + leaf,
@@ -119,13 +166,18 @@ function draw() {
   textSize(20);
   textAlign(CENTER, CENTER);
   fill("fff");
-
-  text(mails, width / 2 - 10, 50);
-  image(svgMailsimple, width / 2 + 10, 41, 25, 15);
-  console.log(totalCO2);
+  push();
+  textSize(50);
+  text(mails, width / 2, 60);
+  pop();
+  image(svgMailsimple, width / 2 - 12, 15, 25, 15);
 
   if (totalCO2 >= 1000000) {
-    text("CO2 Production Avoided: " + grammesToTonnes(totalCO2) + " tonnes", width / 2, 110);
+    text(
+      "CO2 Production Avoided: " + grammesToTonnes(totalCO2) + " tonnes",
+      width / 2,
+      110
+    );
   } else if (totalCO2 >= 1000) {
     text(
       "CO2 Production Avoided: " + grammesToKg(totalCO2) + " kg",
@@ -135,8 +187,14 @@ function draw() {
   } else {
     text("CO2 Production Avoided: " + totalCO2 + " g", width / 2, 110);
   }
-  // text(cookiesPerClick + " mails par clic", width / 2, 140);
+  // text(clicksPerSecond + " mails par clic", width / 2, 140);
   // text(clicksPerSecond + " mails par seconde", width / 2, 170);
+  push();
+  textSize(20);
+  textAlign(CENTER, CENTER);
+  fill("#FFFFFF");
+  // text("Clicks per Second: " + clicksPerSecond, width / 2, 140);
+  // Add this at the top with other variable declarations
 
   if (isCookieClicked) {
     fill(255, 0, 0);
@@ -166,18 +224,28 @@ function draw() {
   let circleWidth = 30;
   let circleHeight = 30;
 
+  // Tableau pour gérer les états de cooldown des cercles
+  let cooldownStates = [false, false, false, false];
+  let cooldownDurations = [10000, 15000, 20000, 30000]; // Durées spécifiques pour chaque cercle
+
   for (let i = 0; i < 4; i++) {
     const circleId = `circle-${i}`;
+    let circleX = i * 75 + width / 2 - 120;
+    let circleY = height - 250;
+
+    // Modifier la couleur en fonction de l'état du cooldown
+    if (cooldownStates[i]) {
+      colors_circle[i] = "#6DBF9E"; // Couleur grise pendant le cooldown
+    } else {
+      colors_circle[i] = "#CCC"; // Couleur normale
+    }
+
+    // Dessiner le cercle
     fill(colors_circle[i]);
     noStroke();
-    circle(
-      i * 75 + width / 2 - 120,
-      height / 2 + 190,
-      circleWidth,
-      circleHeight
-    );
-    let circleX = i * 75 + width / 2 - 120;
-    let circleY = height / 2 + 190;
+    circle(circleX, circleY, circleWidth, circleHeight);
+
+    // Dessiner l'image associée
     let imageSize = 30;
     image(
       svgImagesBoost[i],
@@ -189,6 +257,7 @@ function draw() {
   }
 
   let colors = ["#D2533E", "#CFD23E", "#D2533E", "#CFD23E", "#D2533E"];
+  let Grayscolors = ["#989797", "#AEAEAE", "#989797", "#AEAEAE", "#989797"];
   let rectWidth = width / 5;
   let rectHeight = 200;
   let texts = [
@@ -200,8 +269,18 @@ function draw() {
   ];
 
   for (let i = 0; i < 5; i++) {
-    const rectId = `rect-${i}`;
-    fill(colors[i]);
+    let rectColor;
+
+    let thresholds = [10, 100, 250, 500, 1000];
+
+    if (mails >= thresholds[i]) {
+      rectColor = colors[i];
+    } else {
+      rectColor = Grayscolors[i];
+    }
+
+    // Appliquer la couleur au rectangle
+    fill(rectColor);
     noStroke();
     rect(i * rectWidth, height - rectHeight, rectWidth, rectHeight);
 
@@ -213,7 +292,6 @@ function draw() {
       let yOffset; // Initialisation de l'offset pour chaque texte et image
 
       if (j === 0) {
-        // Premier texte (avec image)
         yOffset = -60;
       } else if (j === 1) {
         // Texte central
@@ -271,27 +349,53 @@ function draw() {
   }
 
   if (totalCO2 >= 250000 && !stopNotifPlane) {
-    createNotif("Congratulations!", "You’ve offset the equivalent of a flight from Paris to Berlin by plane.", svgPlane);
+    createNotif(
+      "Congratulations!",
+      "You’ve offset the equivalent of a flight from Paris to Berlin by plane.",
+      svgPlane
+    );
     stopNotifPlane = true;
   } else if (totalCO2 >= 200000 && !stopNotifCloud) {
-    createNotif("Great Job!", "You've eliminated the CO₂ impact of 100 GB stored in the cloud for a year", svgCloud);
+    createNotif(
+      "Great Job!",
+      "You've eliminated the CO₂ impact of 100 GB stored in the cloud for a year",
+      svgCloud
+    );
     stopNotifCloud = true;
   } else if (totalCO2 >= 7500 && !stopNotifShower) {
-    createNotif("Great Job!", "You've eliminated the CO₂ equivalent of a quick 10-minute shower", svgShower);
+    createNotif(
+      "Great Job!",
+      "You've eliminated the CO₂ equivalent of a quick 10-minute shower",
+      svgShower
+    );
     stopNotifShower = true;
   } else if (totalCO2 >= 3200 && !stopNotifTrash) {
-    createNotif("Well done!", "You've saved the same CO₂ as microwaving 200 popcorn bags", svgTrash);
+    createNotif(
+      "Well done!",
+      "You've saved the same CO₂ as microwaving 200 popcorn bags",
+      svgTrash
+    );
     stopNotifTrash = true;
   } else if (totalCO2 >= 400 && !stopNotifRadio) {
-    createNotif("Well done!", "You've saved the same CO₂ as watching an entire season of Wednesday", svgRadio);
+    createNotif(
+      "Well done!",
+      "You've saved the same CO₂ as watching an entire season of Wednesday",
+      svgRadio
+    );
     stopNotifRadio = true;
   } else if (totalCO2 >= 300 && !stopNotifBreath) {
-    createNotif("Congratulations!", " You've eliminated as much CO₂ as a human's breathing", svgBreathing);
+    createNotif(
+      "Congratulations!",
+      " You've eliminated as much CO₂ as a human's breathing",
+      svgBreathing
+    );
     stopNotifBreath = true;
   }
 }
 
 function mousePressed() {
+  click++;
+
   if (dist(mouseX, mouseY, width / 2, height / 2 - 70) <= 220) {
     isCookieClicked = true;
     mails += cookiesPerClick;
@@ -373,42 +477,65 @@ function mousePressed() {
   const x5BoostX = width / 2 - 120;
   const x5BoostY = height / 2 + 190;
   const x5BoostRadius = 30;
+
+  const isCooldown = false;
+  const cooldownDuration = 30000; // Durée du boost (30 secondes)
+  const cooldownStartTime = 0;
+
   if (
     dist(mouseX, mouseY, x5BoostX, x5BoostY) <= x5BoostRadius &&
-    boolboost1 == true
+    boolboost1 == true &&
+    mails > 1
   ) {
-
+    boolboost1 = false;
     cookiesPerClick += 5;
+
     setTimeout(() => {
       cookiesPerClick -= 5;
     }, 30000);
 
-    boolboost1 = false;
     setTimeout(() => {
       boolboost1 = true;
-    }, 10000);
+    }, 2000);
   }
 
   // Auto Clicker
   const autoClickX = width / 2 - 120 + 75;
   const autoClickY = height / 2 + 190;
   const autoClickRadius = 30;
-  if (dist(mouseX, mouseY, autoClickX, autoClickY) <= autoClickRadius) {
+  if (
+    dist(mouseX, mouseY, autoClickX, autoClickY) <= autoClickRadius &&
+    mails > 1
+  ) {
     passif += 10;
     setTimeout(() => {
       passif -= 10;
     }, 20000);
+
+    boolboost2 = false;
+
+    setTimeout(() => {
+      boolboost2 = true;
+    }, 120000);
   }
 
   // x15 Boost
   const x15BoostX = width / 2 - 120 + 150;
   const x15BoostY = height / 2 + 190;
   const x15BoostRadius = 30;
-  if (dist(mouseX, mouseY, x15BoostX, x15BoostY) <= x15BoostRadius) {
+  if (
+    dist(mouseX, mouseY, x15BoostX, x15BoostY) <= x15BoostRadius &&
+    mails > 1
+  ) {
     passif *= 2;
     setTimeout(() => {
       passif /= 2;
     }, 60000);
+
+    boolboost3 = false;
+    setTimeout(() => {
+      boolboost3 = true;
+    }, 180000);
   }
 
   // Special Boost
@@ -416,11 +543,15 @@ function mousePressed() {
   const specialBoostY = height / 2 + 190;
   const specialBoostRadius = 30;
   if (
-    dist(mouseX, mouseY, specialBoostX, specialBoostY) <= specialBoostRadius
+    dist(mouseX, mouseY, specialBoostX, specialBoostY) <= specialBoostRadius &&
+    mails > 1
   ) {
-    mails += parseInt(mails / 100 * 15);
-    totalCO2 += parseInt(totalCO2 / 100 * 15);
-    // Implement special boost functionality here
+    mails += parseInt((mails / 100) * 15);
+    totalCO2 += parseInt((totalCO2 / 100) * 15);
+    boolboost4 = false;
+    setTimeout(() => {
+      boolboost4 = true;
+    }, 240000);
   }
 }
 
@@ -469,24 +600,27 @@ function createNotif(title, message, svg) {
   document.body.appendChild(notif);
 }
 
-
 let x, y, targetX, targetY, angle;
-let delay = 1000;
+const delay = 1000;
 let lastUpdateTime = 0;
 
 function setNewTarget() {
   // Set a new target outside the canvas
   let side = int(random(4));
-  if (side === 0) { // Left
+  if (side === 0) {
+    // Left
     targetX = -102; // Adjusted to ensure it's outside
     targetY = random(height);
-  } else if (side === 1) { // Right
+  } else if (side === 1) {
+    // Right
     targetX = width + 102; // Adjusted to ensure it's outside
     targetY = random(height);
-  } else if (side === 2) { // Top
+  } else if (side === 2) {
+    // Top
     targetX = random(width);
     targetY = -102; // Adjusted to ensure it's outside
-  } else { // Bottom
+  } else {
+    // Bottom
     targetX = random(width);
     targetY = height + 102; // Adjusted to ensure it's outside
   }
