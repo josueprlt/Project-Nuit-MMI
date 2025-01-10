@@ -54,9 +54,9 @@ let stopNotifCloud = false;
 let stopNotifPlane = false;
 
 function preload() {
-  bgImage = loadImage("/assets/motif-fond.png");
-  svgMail = loadImage("/assets/mail.svg");
-  svgMailsimple = loadImage("/assets/mailsimple.svg");
+  bgImage = loadImage("./assets/motif-fond.png");
+  svgMail = loadImage("./assets/mail.svg");
+  svgMailsimple = loadImage("./assets/mailsimple.svg");
 
   svgLeaf = loadImage("/assets/leaf.svg");
   svgSprout = loadImage("/assets/sprout.svg");
