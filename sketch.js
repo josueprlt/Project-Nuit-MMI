@@ -46,7 +46,12 @@ let boolboost2 = false;
 let boolboost3 = false;
 let boolboost4 = false;
 
-let stopNotif = false;
+let stopNotifBreath = false;
+let stopNotifShower = false;
+let stopNotifTrash = false;
+let stopNotifRadio = false;
+let stopNotifCloud = false;
+let stopNotifPlane = false;
 
 function preload() {
   bgImage = loadImage("/assets/motif-fond.png");
@@ -66,51 +71,23 @@ function preload() {
 
   svgImages = [svgLeaf, svgSprout, svgBush, svgTree, svgForest];
   svgImagesBoost = [svgx5, svgAuto, svgx15, svg15];
-
-  svgPlane = loadImage("/assets/notifications/plane.svg");
-  svgBreathing = loadImage("/assets/notifications/breathing.svg");
-  svgRadio = loadImage("/assets/notifications/radio.svg");
-  svgTrash = loadImage("/assets/notifications/trash.svg");
-  svgShower = loadImage("/assets/notifications/shower.svg");
-  svgCloud = loadImage("/assets/notifications/cloud.svg");
-
-  notifications = [
-    {
-      title: "Congratulations!",
-      message:
-        "You’ve offset the equivalent of a flight from Paris to Berlin by plane.",
-      svg: svgPlane,
-    },
-    {
-      title: "Congratulations!",
-      message: "You've eliminated as much CO₂ as a human's breathing",
-      svg: svgBreathing,
-    },
-    {
-      title: "Well done!",
-      message:
-        "You've saved the same CO₂ as watching an entire season of Wednesday",
-      svg: svgRadio,
-    },
-    {
-      title: "Well done!",
-      message: "You've saved the same CO₂ as microwaving 200 popcorn bags",
-      svg: svgTrash,
-    },
-    {
-      title: "Great Job!",
-      message:
-        "You've eliminated the CO₂ equivalent of a quick 10-minute shower",
-      svg: svgShower,
-    },
-    {
-      title: "Great Job!",
-      message:
-        "You've eliminated the CO₂ impact of 100 GB stored in the cloud for a year",
-      svg: svgCloud,
-    },
-  ];
 }
+
+async function loadSVG(path) {
+  const response = await fetch(path);
+  return await response.text();
+}
+
+async function init() {
+  svgPlane = await loadSVG("/assets/notifications/plane.svg");
+  svgBreathing = await loadSVG("/assets/notifications/breathing.svg");
+  svgRadio = await loadSVG("/assets/notifications/radio.svg");
+  svgTrash = await loadSVG("/assets/notifications/trash.svg");
+  svgShower = await loadSVG("/assets/notifications/shower.svg");
+  svgCloud = await loadSVG("/assets/notifications/cloud.svg");
+}
+
+init();
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -143,8 +120,10 @@ function draw() {
 
   text(mails, width / 2 - 10, 50);
   image(svgMailsimple, width / 2 + 10, 41, 25, 15);
+  console.log(totalCO2);
+  
   if (totalCO2 >= 1000000) {
-    text("CO2 Production Avoided: " + totalCO2 + " tonnes", width / 2, 110);
+    text("CO2 Production Avoided: " + grammesToTonnes(totalCO2) + " tonnes", width / 2, 110);
   } else if (totalCO2 >= 1000) {
     text(
       "CO2 Production Avoided: " + grammesToKg(totalCO2) + " kg",
@@ -289,9 +268,24 @@ function draw() {
     text(textsSvg[i], xOffset + 70, yOffset + 25); // Décalage pour aligner à droite des images
   }
 
-  if (totalCO2 >= 40 && !stopNotif) {
-    createNotif("Congratulations!", "Première Notif", svgPlane);
-    stopNotif = true;
+  if (totalCO2 >= 250000 && !stopNotifPlane) {
+    createNotif("Congratulations!", "You’ve offset the equivalent of a flight from Paris to Berlin by plane.", svgPlane);
+    stopNotifPlane = true;
+  } else if (totalCO2 >= 200000 && !stopNotifCloud) {
+    createNotif("Congratulations!", "You've eliminated the CO₂ impact of 100 GB stored in the cloud for a year", svgCloud);
+    stopNotifCloud = true;
+  } else if (totalCO2 >= 7500 && !stopNotifShower) {
+    createNotif("Congratulations!", "You've eliminated the CO₂ equivalent of a quick 10-minute shower", svgShower);
+    stopNotifShower = true;
+  } else if (totalCO2 >= 3200 && !stopNotifTrash) {
+    createNotif("Congratulations!", "You've saved the same CO₂ as microwaving 200 popcorn bags", svgTrash);
+    stopNotifTrash = true;
+  } else if (totalCO2 >= 400 && !stopNotifRadio) {
+    createNotif("Congratulations!", "You've saved the same CO₂ as watching an entire season of Wednesday", svgRadio);
+    stopNotifRadio = true;
+  } else if (totalCO2 >= 300 && !stopNotifBreath) {
+    createNotif("Congratulations!", " You've eliminated as much CO₂ as a human's breathing", svgBreathing);
+    stopNotifBreath = true;
   }
 }
 
@@ -381,7 +375,7 @@ function mousePressed() {
     dist(mouseX, mouseY, x5BoostX, x5BoostY) <= x5BoostRadius &&
     boolboost1 == true
   ) {
-    
+
     cookiesPerClick += 5;
     setTimeout(() => {
       cookiesPerClick -= 5;
@@ -420,10 +414,10 @@ function mousePressed() {
   const specialBoostY = height / 2 + 190;
   const specialBoostRadius = 30;
   if (
-    dist(mouseX, mouseY, specialBoostX, specialBoostY) <= specialBoostRadius 
+    dist(mouseX, mouseY, specialBoostX, specialBoostY) <= specialBoostRadius
   ) {
-    mails += parseInt(mails/100 * 15);
-    totalCO2 += parseInt(totalCO2/100 * 15);
+    mails += parseInt(mails / 100 * 15);
+    totalCO2 += parseInt(totalCO2 / 100 * 15);
     // Implement special boost functionality here
   }
 }
@@ -462,13 +456,12 @@ function createNotif(title, message, svg) {
         <p style="font-size: 1.2em;">${message}</p>
       </div>
     </div>
-    <button class="close-btn">&times;</button>
   `;
 
   // Ajouter un style CSS pour positionner la notification
   notif.style.position = "absolute";
-  notif.style.left = `25px`;
-  notif.style.bottom = `100px`;
+  notif.style.left = `15px`;
+  notif.style.bottom = `225px`;
 
   // Ajouter la notification au body (ou un autre conteneur DOM si nécessaire)
   document.body.appendChild(notif);

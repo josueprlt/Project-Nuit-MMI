@@ -39,20 +39,3 @@ canvas {
     margin-right: 15px;
   }
   
-  /* Close button styling */
-  .card .close-btn {
-    font-size: 40px;
-    font-weight:normal ;
-    color: #fff;
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
-  
-  .card .close-btn:hover {
-    opacity: 0.8;
-  }
-  
