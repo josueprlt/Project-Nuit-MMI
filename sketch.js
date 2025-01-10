@@ -91,6 +91,8 @@ init();
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  setNewTarget();
+  clear();
 }
 
 function draw() {
@@ -121,7 +123,7 @@ function draw() {
   text(mails, width / 2 - 10, 50);
   image(svgMailsimple, width / 2 + 10, 41, 25, 15);
   console.log(totalCO2);
-  
+
   if (totalCO2 >= 1000000) {
     text("CO2 Production Avoided: " + grammesToTonnes(totalCO2) + " tonnes", width / 2, 110);
   } else if (totalCO2 >= 1000) {
@@ -272,16 +274,16 @@ function draw() {
     createNotif("Congratulations!", "You’ve offset the equivalent of a flight from Paris to Berlin by plane.", svgPlane);
     stopNotifPlane = true;
   } else if (totalCO2 >= 200000 && !stopNotifCloud) {
-    createNotif("Congratulations!", "You've eliminated the CO₂ impact of 100 GB stored in the cloud for a year", svgCloud);
+    createNotif("Great Job!", "You've eliminated the CO₂ impact of 100 GB stored in the cloud for a year", svgCloud);
     stopNotifCloud = true;
   } else if (totalCO2 >= 7500 && !stopNotifShower) {
-    createNotif("Congratulations!", "You've eliminated the CO₂ equivalent of a quick 10-minute shower", svgShower);
+    createNotif("Great Job!", "You've eliminated the CO₂ equivalent of a quick 10-minute shower", svgShower);
     stopNotifShower = true;
   } else if (totalCO2 >= 3200 && !stopNotifTrash) {
-    createNotif("Congratulations!", "You've saved the same CO₂ as microwaving 200 popcorn bags", svgTrash);
+    createNotif("Well done!", "You've saved the same CO₂ as microwaving 200 popcorn bags", svgTrash);
     stopNotifTrash = true;
   } else if (totalCO2 >= 400 && !stopNotifRadio) {
-    createNotif("Congratulations!", "You've saved the same CO₂ as watching an entire season of Wednesday", svgRadio);
+    createNotif("Well done!", "You've saved the same CO₂ as watching an entire season of Wednesday", svgRadio);
     stopNotifRadio = true;
   } else if (totalCO2 >= 300 && !stopNotifBreath) {
     createNotif("Congratulations!", " You've eliminated as much CO₂ as a human's breathing", svgBreathing);
@@ -465,4 +467,70 @@ function createNotif(title, message, svg) {
 
   // Ajouter la notification au body (ou un autre conteneur DOM si nécessaire)
   document.body.appendChild(notif);
+}
+
+
+let x, y, targetX, targetY, angle;
+let delay = 1000;
+let lastUpdateTime = 0;
+
+function setNewTarget() {
+  // Set a new target outside the canvas
+  let side = int(random(4));
+  if (side === 0) { // Left
+    targetX = -102; // Adjusted to ensure it's outside
+    targetY = random(height);
+  } else if (side === 1) { // Right
+    targetX = width + 102; // Adjusted to ensure it's outside
+    targetY = random(height);
+  } else if (side === 2) { // Top
+    targetX = random(width);
+    targetY = -102; // Adjusted to ensure it's outside
+  } else { // Bottom
+    targetX = random(width);
+    targetY = height + 102; // Adjusted to ensure it's outside
+  }
+  lastUpdateTime = millis(); // Update the last update time
+}
+
+function updatePosition() {
+  let speed = int(random(4, 10));
+  angle = atan2(targetY - y, targetX - x);
+  x += cos(angle) * speed;
+  y += sin(angle) * speed;
+
+  // Check if the object is out of bounds and set a new target if it is
+  if (x < -100 || x > width + 100 || y < -100 || y > height + 100) {
+    setTimeout(setNewTarget, delay); // Delay the new target setting
+  }
+}
+
+function drawSVG(x, y, angle) {
+  push();
+  translate(x, y);
+  rotate(angle);
+  scale(-1, 1); // Inverser l'élément
+  scale(0.5); // Réduire la taille de l'élément
+
+  noStroke(); // Retirer le contour
+
+  // Dessiner le premier triangle avec une couleur
+  fill("#EAEAEA"); // Rouge
+  beginShape();
+  vertex(200.13, 74.4841);
+  vertex(0.874221, 19.3688);
+  vertex(200.5, 0.000561644);
+  vertex(200.13, 74.4841);
+  endShape(CLOSE);
+
+  // Dessiner le deuxième triangle avec une autre couleur
+  fill("#D9D9D9"); // Bleu
+  beginShape();
+  vertex(93.5, 24.5);
+  vertex(200, 17.5);
+  vertex(200, 50);
+  vertex(93.5, 24.5);
+  endShape(CLOSE);
+
+  pop();
 }
