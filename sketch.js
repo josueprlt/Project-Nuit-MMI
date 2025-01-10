@@ -26,6 +26,28 @@ let svgTree;
 let svgForest;
 let svgImages;
 
+let svg15;
+let svgAuto;
+let svgx5;
+let svgx15;
+
+let svgImagesBoost;
+
+let notifications;
+let svgPlane;
+let svgBreathing;
+let svgRadio;
+let svgTrash;
+let svgShower;
+let svgCloud;
+
+let boolboost1 = false;
+let boolboost2 = false;
+let boolboost3 = false;
+let boolboost4 = false;
+
+let stopNotif = false;
+
 function preload() {
   bgImage = loadImage("/assets/motif-fond.png");
   svgMail = loadImage("/assets/mail.svg");
@@ -37,10 +59,58 @@ function preload() {
   svgTree = loadImage("/assets/tree.svg");
   svgForest = loadImage("/assets/forest.svg");
 
+  svg15 = loadImage("/assets/suppr.svg");
+  svgAuto = loadImage("/assets/AutoClick.svg");
+  svgx5 = loadImage("/assets/Mailx5.svg");
+  svgx15 = loadImage("/assets/Salex15.svg");
+
   svgImages = [svgLeaf, svgSprout, svgBush, svgTree, svgForest];
+  svgImagesBoost = [svgx5, svgAuto, svgx15, svg15];
+
+  svgPlane = loadImage("/assets/notifications/plane.svg");
+  svgBreathing = loadImage("/assets/notifications/breathing.svg");
+  svgRadio = loadImage("/assets/notifications/radio.svg");
+  svgTrash = loadImage("/assets/notifications/trash.svg");
+  svgShower = loadImage("/assets/notifications/shower.svg");
+  svgCloud = loadImage("/assets/notifications/cloud.svg");
+
+  notifications = [
+    {
+      title: "Congratulations!",
+      message:
+        "You’ve offset the equivalent of a flight from Paris to Berlin by plane.",
+      svg: svgPlane,
+    },
+    {
+      title: "Congratulations!",
+      message: "You've eliminated as much CO₂ as a human's breathing",
+      svg: svgBreathing,
+    },
+    {
+      title: "Well done!",
+      message:
+        "You've saved the same CO₂ as watching an entire season of Wednesday",
+      svg: svgRadio,
+    },
+    {
+      title: "Well done!",
+      message: "You've saved the same CO₂ as microwaving 200 popcorn bags",
+      svg: svgTrash,
+    },
+    {
+      title: "Great Job!",
+      message:
+        "You've eliminated the CO₂ equivalent of a quick 10-minute shower",
+      svg: svgShower,
+    },
+    {
+      title: "Great Job!",
+      message:
+        "You've eliminated the CO₂ impact of 100 GB stored in the cloud for a year",
+      svg: svgCloud,
+    },
+  ];
 }
-
-
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -49,14 +119,12 @@ function setup() {
 function draw() {
   background(bgImage);
 
-
-  
   let textsSvg = [
-    "x"+leaf,
-    "x"+sprout,
-    "x"+bush,
-    "x"+tree,
-    "x"+forest,
+    "x" + leaf,
+    "x" + sprout,
+    "x" + bush,
+    "x" + tree,
+    "x" + forest,
   ];
 
   // Ajouter les mails des clics automatiques chaque seconde
@@ -75,14 +143,14 @@ function draw() {
 
   text(mails, width / 2 - 10, 50);
   image(svgMailsimple, width / 2 + 10, 41, 25, 15);
-  if (totalCO2 >= 1000) {
+  if (totalCO2 >= 1000000) {
+    text("CO2 Production Avoided: " + totalCO2 + " tonnes", width / 2, 110);
+  } else if (totalCO2 >= 1000) {
     text(
       "CO2 Production Avoided: " + grammesToKg(totalCO2) + " kg",
       width / 2,
       110
     );
-  } else if (totalCO2 >= 10000) {
-    text("CO2 Production Avoided: " + totalCO2 + " tonnes", width / 2, 110);
   } else {
     text("CO2 Production Avoided: " + totalCO2 + " g", width / 2, 110);
   }
@@ -99,12 +167,12 @@ function draw() {
 
   if (isCookieClicked) {
     push();
-    translate(width / 2 - 250, height / 2 - 153 + 10);
+    translate(width / 2 - 250, height / 2 - 250 + 10);
     scale(0.95);
     image(svgMail, 0, 0, 500, 306);
     pop();
   } else {
-    image(svgMail, width / 2 - 250, height / 2 - 153, 500, 306);
+    image(svgMail, width / 2 - 250, height / 2 - 250, 500, 306);
   }
 
   stroke(1);
@@ -112,6 +180,32 @@ function draw() {
   fill(0);
   // text(upgradeCost + ' pour augmenter les clics', 0.25 * width, 0.875 * height)
   // text(autoClickerCost + ' pour un clic automatique', 0.75 * width, 0.875 * height)
+
+  let colors_circle = ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"];
+  let circleWidth = 30;
+  let circleHeight = 30;
+
+  for (let i = 0; i < 4; i++) {
+    const circleId = `circle-${i}`;
+    fill(colors_circle[i]);
+    noStroke();
+    circle(
+      i * 75 + width / 2 - 120,
+      height / 2 + 190,
+      circleWidth,
+      circleHeight
+    );
+    let circleX = i * 75 + width / 2 - 120;
+    let circleY = height / 2 + 190;
+    let imageSize = 30;
+    image(
+      svgImagesBoost[i],
+      circleX - imageSize / 2,
+      circleY - imageSize / 2,
+      imageSize + 5,
+      imageSize
+    );
+  }
 
   let colors = ["#D2533E", "#CFD23E", "#D2533E", "#CFD23E", "#D2533E"];
   let rectWidth = width / 5;
@@ -165,7 +259,13 @@ function draw() {
           height - rectHeight / 2 + yOffset
         );
         if (j === 0) {
-          image(svgMailsimple, i * rectWidth + rectWidth / 2 + 50, height - rectHeight / 2 + yOffset - 12, 30, 20);
+          image(
+            svgMailsimple,
+            i * rectWidth + rectWidth / 2 + 50,
+            height - rectHeight / 2 + yOffset - 12,
+            30,
+            20
+          );
         }
       }
     }
@@ -185,13 +285,18 @@ function draw() {
     fill("#fff"); // Couleur du texte
     textSize(39); // Taille du texte
     textAlign(LEFT, CENTER);
-  
+
     text(textsSvg[i], xOffset + 70, yOffset + 25); // Décalage pour aligner à droite des images
+  }
+
+  if (totalCO2 >= 40 && !stopNotif) {
+    createNotif("Congratulations!", "Première Notif", svgPlane);
+    stopNotif = true;
   }
 }
 
 function mousePressed() {
-  if (dist(mouseX, mouseY, width / 2, height / 2) <= 275) {
+  if (dist(mouseX, mouseY, width / 2, height / 2 - 70) <= 220) {
     isCookieClicked = true;
     mails += cookiesPerClick;
     totalMails += cookiesPerClick;
@@ -268,20 +373,59 @@ function mousePressed() {
     }
   }
 
-  // else if (mouseY > height * 0.75 && mouseX < width / 2 && mails >= upgradeCost) {
-  // 	console.log('Level1');
-  // 	isUpgradeClicked = true
-  // 	cookiesPerClick++
-  // 	mails -= upgradeCost
-  // 	upgradeCost = parseInt(upgradeCost * 1.3)
-  // }
-  // else if (mouseY > height * 0.75 && mouseX >= width / 2 && mails >= autoClickerCost) {
-  // 	console.log('Level2');
-  // 	isAutoClicked = true
-  // 	clicksPerSecond++
-  // 	mails -= autoClickerCost
-  // 	autoClickerCost = parseInt(autoClickerCost * 1.2)
-  // }
+  // x5 Boost
+  const x5BoostX = width / 2 - 120;
+  const x5BoostY = height / 2 + 190;
+  const x5BoostRadius = 30;
+  if (
+    dist(mouseX, mouseY, x5BoostX, x5BoostY) <= x5BoostRadius &&
+    boolboost1 == true
+  ) {
+    
+    cookiesPerClick += 5;
+    setTimeout(() => {
+      cookiesPerClick -= 5;
+    }, 30000);
+
+    boolboost1 = false;
+    setTimeout(() => {
+      boolboost1 = true;
+    }, 10000);
+  }
+
+  // Auto Clicker
+  const autoClickX = width / 2 - 120 + 75;
+  const autoClickY = height / 2 + 190;
+  const autoClickRadius = 30;
+  if (dist(mouseX, mouseY, autoClickX, autoClickY) <= autoClickRadius) {
+    passif += 10;
+    setTimeout(() => {
+      passif -= 10;
+    }, 20000);
+  }
+
+  // x15 Boost
+  const x15BoostX = width / 2 - 120 + 150;
+  const x15BoostY = height / 2 + 190;
+  const x15BoostRadius = 30;
+  if (dist(mouseX, mouseY, x15BoostX, x15BoostY) <= x15BoostRadius) {
+    passif *= 2;
+    setTimeout(() => {
+      passif /= 2;
+    }, 60000);
+  }
+
+  // Special Boost
+  const specialBoostX = width / 2 - 120 + 225;
+  const specialBoostY = height / 2 + 190;
+  const specialBoostRadius = 30;
+  if (
+    dist(mouseX, mouseY, specialBoostX, specialBoostY) <= specialBoostRadius 
+  ) {
+    mails += parseInt(mails/100 * 15);
+    totalCO2 += parseInt(totalCO2/100 * 15);
+    // Implement special boost functionality here
+  }
 }
 
 function mouseReleased() {
@@ -299,5 +443,33 @@ function grammesToKg(grammes) {
   return (grammes / 1000).toFixed(2);
 }
 function grammesToTonnes(grammes) {
-  return (grammes / 100000).toFixed(2);
+  return (grammes / 1000000).toFixed(2);
+}
+
+function createNotif(title, message, svg) {
+  // Créer une div pour contenir la notification
+  const notif = document.createElement("div");
+  notif.classList.add("card");
+
+  // Ajouter le contenu HTML
+  notif.innerHTML = `
+    <div class="content">
+      <div class="icon">
+        ${svg}
+      </div>
+      <div>
+        <strong style="font-size: 1.5em;">${title}</strong>
+        <p style="font-size: 1.2em;">${message}</p>
+      </div>
+    </div>
+    <button class="close-btn">&times;</button>
+  `;
+
+  // Ajouter un style CSS pour positionner la notification
+  notif.style.position = "absolute";
+  notif.style.left = `25px`;
+  notif.style.bottom = `100px`;
+
+  // Ajouter la notification au body (ou un autre conteneur DOM si nécessaire)
+  document.body.appendChild(notif);
 }
