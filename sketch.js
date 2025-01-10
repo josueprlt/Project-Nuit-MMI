@@ -58,16 +58,16 @@ function preload() {
   svgMail = loadImage("./assets/mail.svg");
   svgMailsimple = loadImage("./assets/mailsimple.svg");
 
-  svgLeaf = loadImage("/assets/leaf.svg");
-  svgSprout = loadImage("/assets/sprout.svg");
-  svgBush = loadImage("/assets/bush.svg");
-  svgTree = loadImage("/assets/tree.svg");
-  svgForest = loadImage("/assets/forest.svg");
+  svgLeaf = loadImage("./assets/leaf.svg");
+  svgSprout = loadImage("./assets/sprout.svg");
+  svgBush = loadImage("./assets/bush.svg");
+  svgTree = loadImage("./assets/tree.svg");
+  svgForest = loadImage("./assets/forest.svg");
 
-  svg15 = loadImage("/assets/suppr.svg");
-  svgAuto = loadImage("/assets/AutoClick.svg");
-  svgx5 = loadImage("/assets/Mailx5.svg");
-  svgx15 = loadImage("/assets/Salex15.svg");
+  svg15 = loadImage("./assets/suppr.svg");
+  svgAuto = loadImage("./assets/AutoClick.svg");
+  svgx5 = loadImage("./assets/Mailx5.svg");
+  svgx15 = loadImage("./assets/Salex15.svg");
 
   svgImages = [svgLeaf, svgSprout, svgBush, svgTree, svgForest];
   svgImagesBoost = [svgx5, svgAuto, svgx15, svg15];
@@ -79,12 +79,12 @@ async function loadSVG(path) {
 }
 
 async function init() {
-  svgPlane = await loadSVG("/assets/notifications/plane.svg");
-  svgBreathing = await loadSVG("/assets/notifications/breathing.svg");
-  svgRadio = await loadSVG("/assets/notifications/radio.svg");
-  svgTrash = await loadSVG("/assets/notifications/trash.svg");
-  svgShower = await loadSVG("/assets/notifications/shower.svg");
-  svgCloud = await loadSVG("/assets/notifications/cloud.svg");
+  svgPlane = await loadSVG("./assets/notifications/plane.svg");
+  svgBreathing = await loadSVG("./assets/notifications/breathing.svg");
+  svgRadio = await loadSVG("./assets/notifications/radio.svg");
+  svgTrash = await loadSVG("./assets/notifications/trash.svg");
+  svgShower = await loadSVG("./assets/notifications/shower.svg");
+  svgCloud = await loadSVG("./assets/notifications/cloud.svg");
 }
 
 init();
